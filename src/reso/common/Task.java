@@ -4,7 +4,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     Bruno Quoitin - initial API and implementation
  ******************************************************************************/
@@ -12,8 +12,8 @@ package reso.common;
 
 public interface Task {
 
-	void run() throws Exception;
-	
+    void run() throws Exception;
+
 }
 
 

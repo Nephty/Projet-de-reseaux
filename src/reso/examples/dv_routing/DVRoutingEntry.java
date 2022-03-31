@@ -4,7 +4,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     Bruno Quoitin - initial API and implementation
  ******************************************************************************/
@@ -15,19 +15,19 @@ import reso.ip.IPInterfaceAdapter;
 import reso.ip.IPRouteEntry;
 
 public class DVRoutingEntry
-extends IPRouteEntry {
-	
-	public final DVMessage.DV dv;
-	
-	public DVRoutingEntry(IPAddress dst, IPInterfaceAdapter oif, DVMessage.DV dv) {
-		super(dst, oif, DVRoutingProtocol.PROTOCOL_NAME);
-		this.dv= dv;
-	}
-	
-	public String toString() {
-		String s= super.toString();
-		s+= ", metric=" + dv.metric;
-		return s; 
-	}
+        extends IPRouteEntry {
+
+    public final DVMessage.DV dv;
+
+    public DVRoutingEntry(IPAddress dst, IPInterfaceAdapter oif, DVMessage.DV dv) {
+        super(dst, oif, DVRoutingProtocol.PROTOCOL_NAME);
+        this.dv = dv;
+    }
+
+    public String toString() {
+        String s = super.toString();
+        s += ", metric=" + dv.metric;
+        return s;
+    }
 
 }

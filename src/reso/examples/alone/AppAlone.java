@@ -4,42 +4,43 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     Bruno Quoitin - initial API and implementation
  ******************************************************************************/
 package reso.examples.alone;
 
-import reso.common.*;
-import reso.scheduler.*;
+import reso.common.AbstractApplication;
 import reso.common.AbstractTimer;
+import reso.common.Host;
+import reso.scheduler.AbstractScheduler;
 
-public class AppAlone extends AbstractApplication
-{
-	
-    private AbstractTimer timer;
+public class AppAlone extends AbstractApplication {
+
+    private final AbstractTimer timer;
 
     public AppAlone(Host host, double interval) {
-    	super(host, "alone");
-    	timer= new MyTimer(host.getNetwork().getScheduler(), interval);
+        super(host, "alone");
+        timer = new MyTimer(host.getNetwork().getScheduler(), interval);
+    }
+
+    public void start()
+            throws Exception {
+        timer.start();
+    }
+
+    public void stop() {
+        timer.stop();
     }
 
     private class MyTimer extends AbstractTimer {
-    	public MyTimer(AbstractScheduler scheduler, double interval) {
-    		super(scheduler, interval, false);
-    	}
-    	protected void run() throws Exception {
-			System.out.println("app=[" + name + "]" +
-					" time=" + scheduler.getCurrentTime());
-		}
-    }
-    
-    public void start()
-    throws Exception {
-    	timer.start();
-    }
-    
-    public void stop() {
-    	timer.stop();
+        public MyTimer(AbstractScheduler scheduler, double interval) {
+            super(scheduler, interval, false);
+        }
+
+        protected void run() throws Exception {
+            System.out.println("app=[" + name + "]" +
+                    " time=" + scheduler.getCurrentTime());
+        }
     }
 }
