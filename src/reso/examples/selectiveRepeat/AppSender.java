@@ -21,8 +21,13 @@ public class AppSender
 
     public void start()
             throws Exception {
-        ip.addListener(SelectiveRepeatProtocol.IP_PROTO_SELECTREPEAT, new SelectiveRepeatProtocol((IPHost) host));
-        ip.send(IPAddress.ANY, dst, SelectiveRepeatProtocol.IP_PROTO_SELECTREPEAT, new SelectiveRepeatMessage(msg));
+        SelectiveRepeatSender sender = new SelectiveRepeatSender((IPHost) host);
+        ip.addListener(SelectiveRepeatReceiver.IP_PROTO_SELECTREPEAT, sender);
+        sender.sendPackets(msg, dst);
+        //sender.sendPacket(new SelectiveRepeatMessage(msg+1),dst);
+        //sender.sendPacket(new SelectiveRepeatMessage(msg+2),dst);
+        //sender.sendPacket(new SelectiveRepeatMessage(msg+3),dst);
+        //ip.send(IPAddress.ANY, dst, SelectiveRepeatReceiver.IP_PROTO_SELECTREPEAT, new SelectiveRepeatMessage(msg));
     }
 
     public void stop() {

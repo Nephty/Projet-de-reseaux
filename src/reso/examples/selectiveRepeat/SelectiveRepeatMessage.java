@@ -6,12 +6,13 @@ public class SelectiveRepeatMessage implements Message {
 
     public final String msg;
 
-    public SelectiveRepeatMessage(String msg){
+
+    public SelectiveRepeatMessage(String msg) {
         this.msg = msg;
     }
 
     public String toString() {
-        return "SelectiveRepeat [msg="+msg+"]";
+        return "SelectiveRepeat [msg=" + msg + "]";
     }
 
     @Override

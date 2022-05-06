@@ -42,6 +42,7 @@ public class EthernetFrame
 
         public final String name;
         public final int number;
+
         PROTO(int number, String name) {
             this.number = number;
             this.name = name;

@@ -15,7 +15,7 @@ public class AppReceiver
     }
 
     public void start() {
-        ip.addListener(SelectiveRepeatProtocol.IP_PROTO_SELECTREPEAT, new SelectiveRepeatProtocol((IPHost) host));
+        ip.addListener(SelectiveRepeatReceiver.IP_PROTO_SELECTREPEAT, new SelectiveRepeatReceiver((IPHost) host));
     }
 
     public void stop() {

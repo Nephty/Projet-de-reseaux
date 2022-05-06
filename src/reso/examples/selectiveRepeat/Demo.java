@@ -3,7 +3,6 @@ package reso.examples.selectiveRepeat;
 import reso.common.Link;
 import reso.common.Network;
 import reso.ethernet.EthernetAddress;
-import reso.ethernet.EthernetFrame;
 import reso.ethernet.EthernetInterface;
 import reso.examples.static_routing.AppSniffer;
 import reso.ip.IPAddress;
@@ -12,9 +11,7 @@ import reso.scheduler.AbstractScheduler;
 import reso.scheduler.Scheduler;
 import reso.utilities.NetworkBuilder;
 
-import java.util.Scanner;
-
-public class  Demo {
+public class Demo {
 
     /* Enable or disable packet capture (can be used to observe ARP messages) */
     private static final boolean ENABLE_SNIFFER = false;
