@@ -21,4 +21,8 @@ public class AppReceiver
     public void stop() {
     }
 
+    public String getHostName() {
+        return host.name;
+    }
+
 }

@@ -33,5 +33,13 @@ public class AppSender
     public void stop() {
     }
 
+    public String getHostName() {
+        return ip.host.name;
+    }
+
+    public String getIPAddressAsString() {
+        return dst.toString();
+    }
+
 }
 
