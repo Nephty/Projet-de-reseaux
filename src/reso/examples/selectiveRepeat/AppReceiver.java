@@ -7,15 +7,13 @@ import reso.ip.IPLayer;
 public class AppReceiver
         extends AbstractApplication {
 
-    private final IPLayer ip;
 
     public AppReceiver(IPHost host) {
         super(host, "receiver");
-        ip = host.getIPLayer();
     }
 
     public void start() {
-        ip.addListener(SelectiveRepeatReceiver.IP_PROTO_SELECTREPEAT, new SelectiveRepeatReceiver((IPHost) host));
+        new SelectiveRepeatProtocol((IPHost) host);
     }
 
     public void stop() {

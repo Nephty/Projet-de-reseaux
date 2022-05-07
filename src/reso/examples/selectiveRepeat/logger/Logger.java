@@ -37,13 +37,4 @@ public class Logger {
     public static void logAppSenderStopped(AppSender appSender) {
         log(String.format("App sender with host %s and with IP %s stopped.", appSender.getHostName(), appSender.getIPAddressAsString()));
     }
-
-    public static void logPacketSent(Packet packet) {
-        log(String.format("Packet with sequence number %d and content [%s] was sent.", packet.getSeqNumber(), packet.msg.msg));
-    }
-
-    public static void logPacketReceived(Packet packet) {
-        // TODO
-        log(String.format("Packet with sequence number %d and content [%s] has been received.", packet.getSeqNumber(), packet.msg.msg));
-    }
 }

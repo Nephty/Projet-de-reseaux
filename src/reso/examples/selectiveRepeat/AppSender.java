@@ -5,36 +5,36 @@ import reso.ip.IPAddress;
 import reso.ip.IPHost;
 import reso.ip.IPLayer;
 
+import java.util.Random;
+
 public class AppSender
         extends AbstractApplication {
 
-    private final IPLayer ip;
     private final IPAddress dst;
-    private final String msg;
 
-    public AppSender(IPHost host, IPAddress dst, String msg) {
+    public AppSender(IPHost host, IPAddress dst) {
         super(host, "sender");
         this.dst = dst;
-        this.msg = msg;
-        ip = host.getIPLayer();
     }
 
     public void start()
             throws Exception {
-        SelectiveRepeatSender sender = new SelectiveRepeatSender((IPHost) host);
-        ip.addListener(SelectiveRepeatReceiver.IP_PROTO_SELECTREPEAT, sender);
-        sender.sendPackets(msg, dst);
-        //sender.sendPacket(new SelectiveRepeatMessage(msg+1),dst);
-        //sender.sendPacket(new SelectiveRepeatMessage(msg+2),dst);
-        //sender.sendPacket(new SelectiveRepeatMessage(msg+3),dst);
-        //ip.send(IPAddress.ANY, dst, SelectiveRepeatReceiver.IP_PROTO_SELECTREPEAT, new SelectiveRepeatMessage(msg));
+        Random rand = new Random();
+        Packet[] packets = new Packet[15];
+        for (int i=0;i<15;i++){
+            packets[i] = new Packet(i,i);
+        }
+        SelectiveRepeatProtocol transportLayer = new SelectiveRepeatProtocol((IPHost) host);
+        for(int i=0;i<15;i++){
+            transportLayer.sendData(packets[i].data,dst);
+        }
     }
 
     public void stop() {
     }
 
     public String getHostName() {
-        return ip.host.name;
+        return host.name;
     }
 
     public String getIPAddressAsString() {

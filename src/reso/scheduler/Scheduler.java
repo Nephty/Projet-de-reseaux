@@ -79,6 +79,7 @@ public class Scheduler
             evt.run();
         } catch (Exception e) {
             System.out.println("Scheduler " + String.format("%.6f", getCurrentTime()) + " - " + e.getMessage());
+            //e.printStackTrace();
             System.out.flush();
             if (stopOnError)
                 throw new RuntimeException("Simulator stopped - " + e.getMessage());

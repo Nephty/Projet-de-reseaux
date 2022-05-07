@@ -68,7 +68,7 @@ public class IPAddress
         String s = "";
         for (byte b : addr) {
             if (s.length() > 0)
-                s += "";
+                s += ".";
             s += (((int) b) + 128);
         }
         return s;

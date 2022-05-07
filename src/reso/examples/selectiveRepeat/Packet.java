@@ -4,17 +4,23 @@ import reso.common.Message;
 
 public class Packet implements Message {
 
-    public final SelectiveRepeatMessage msg;
+    public int data;
+    public final int seqNumber;
+    public boolean isAck;
 
-    private final int seqNumber;
+    public Packet(int data, int seqNumber) {
+        this.data = data;
+        this.seqNumber = seqNumber;
+        isAck = false;
+    }
 
-    public Packet(SelectiveRepeatMessage msg, int seqNumber) {
-        this.msg = msg;
+    public Packet(int seqNumber){
+        this.isAck = true;
         this.seqNumber = seqNumber;
     }
 
     public String toString() {
-        return "Packet " + seqNumber + "= [" + msg + "]";
+        return "Packet " + seqNumber + ", isAck="+isAck+"]";
     }
 
     public int getSeqNumber() {
@@ -23,6 +29,6 @@ public class Packet implements Message {
 
     @Override
     public int getByteLength() {
-        return (Character.SIZE * msg.msg.length()) / 8 + Integer.SIZE / 8;
+        return (Integer.SIZE)/8;
     }
 }
