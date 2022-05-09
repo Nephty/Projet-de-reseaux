@@ -4,6 +4,7 @@ import reso.common.Link;
 import reso.common.Network;
 import reso.ethernet.EthernetAddress;
 import reso.ethernet.EthernetInterface;
+import reso.examples.selectiveRepeat.logger.Logger;
 import reso.examples.static_routing.AppSniffer;
 import reso.ip.IPAddress;
 import reso.ip.IPHost;
@@ -20,18 +21,7 @@ public class Demo {
 
     public static void main(String[] args) {
         // Params of the application :
-        System.out.println("""
-                  /$$$$$$            /$$                       /$$     /$$                             /$$$$$$$                                            /$$   \s
-                 /$$__  $$          | $$                      | $$    |__/                            | $$__  $$                                          | $$   \s
-                | $$  \\__/  /$$$$$$ | $$  /$$$$$$   /$$$$$$$ /$$$$$$   /$$ /$$    /$$ /$$$$$$         | $$  \\ $$  /$$$$$$   /$$$$$$   /$$$$$$   /$$$$$$  /$$$$$$ \s
-                |  $$$$$$  /$$__  $$| $$ /$$__  $$ /$$_____/|_  $$_/  | $$|  $$  /$$//$$__  $$ /$$$$$$| $$$$$$$/ /$$__  $$ /$$__  $$ /$$__  $$ |____  $$|_  $$_/ \s
-                 \\____  $$| $$$$$$$$| $$| $$$$$$$$| $$        | $$    | $$ \\  $$/$$/| $$$$$$$$|______/| $$__  $$| $$$$$$$$| $$  \\ $$| $$$$$$$$  /$$$$$$$  | $$   \s
-                 /$$  \\ $$| $$_____/| $$| $$_____/| $$        | $$ /$$| $$  \\  $$$/ | $$_____/        | $$  \\ $$| $$_____/| $$  | $$| $$_____/ /$$__  $$  | $$ /$$
-                |  $$$$$$/|  $$$$$$$| $$|  $$$$$$$|  $$$$$$$  |  $$$$/| $$   \\  $/  |  $$$$$$$        | $$  | $$|  $$$$$$$| $$$$$$$/|  $$$$$$$|  $$$$$$$  |  $$$$/
-                 \\______/  \\_______/|__/ \\_______/ \\_______/   \\___/  |__/    \\_/    \\_______/        |__/  |__/ \\_______/| $$____/  \\_______/ \\_______/   \\___/ \s
-                                                                                                                          | $$                                   \s
-                                                                                                                          | $$                                   \s
-                                                                                                                          |__/                                   \s""");
+        Logger.initSelectiveRepeat();
 
         System.out.println("How many packets would you like to send ?");
         Scanner scanner = new Scanner(System.in);
