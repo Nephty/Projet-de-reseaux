@@ -18,19 +18,26 @@ public class Demo {
 
     /* Enable or disable packet capture (can be used to observe ARP messages) */
     private static final boolean ENABLE_SNIFFER = false;
+    public static AbstractScheduler scheduler;
 
     public static void main(String[] args) {
         // Params of the application :
         Logger.initSelectiveRepeat();
 
-        System.out.println("How many packets would you like to send ?");
         Scanner scanner = new Scanner(System.in);
-        int packetNbr = scanner.nextInt();
-        System.out.println("Percentage of chance to loose a packet ? (0-1)");
-        double missingRate = scanner.nextDouble();
+        int packetNbr;
+        do {
+            System.out.print("How many packets would you like to send ? (1+) >> ");
+            packetNbr = scanner.nextInt();
+        } while (packetNbr < 1);
+        double missingRate;
+        do {
+            System.out.print("Percentage of chance to loose a packet ? (0-1) >> ");
+            missingRate = scanner.nextDouble();
+        } while (missingRate > 1);
 
 
-        AbstractScheduler scheduler = new Scheduler();
+        scheduler = new Scheduler();
         Network network = new Network(scheduler);
         try {
             final EthernetAddress MAC_ADDR1 = EthernetAddress.getByAddress(0x00, 0x26, 0xbb, 0x4e, 0xfc, 0x28);

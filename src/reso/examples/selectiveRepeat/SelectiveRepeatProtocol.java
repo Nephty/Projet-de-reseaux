@@ -5,7 +5,6 @@ import reso.examples.selectiveRepeat.logger.Logger;
 import reso.ip.*;
 import reso.scheduler.AbstractScheduler;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class SelectiveRepeatProtocol implements IPInterfaceListener {
@@ -97,13 +96,13 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
 
     private void sendData(Packet data, IPAddress dst) throws Exception {
         if (next_seq_num < sendBase + WINDOW_SIZE) {
+            Logger.logPacketSent(data); // TODO : is data the packet sent ?
             if (random.nextDouble() > packetLossProbability) {
-                Logger.logPacketSent(data); // TODO : is data the packet sent ?
-                System.out.println("-- SENDING pkt n°" + next_seq_num);
+                //System.out.println("-- SENDING pkt n°" + next_seq_num);
                 host.getIPLayer().send(IPAddress.ANY, dst, IP_PROTO_SELECTIVE_REPEAT, data);
             } else {
                 Logger.logPacketLoss(data); // TODO : is data the packet sent ?
-                System.out.println("===== PACKET LOSS "+next_seq_num+" ========");
+                //System.out.println("===== PACKET LOSS "+next_seq_num+" ========");
             }
             Timer tmpTimer = new Timer(host.getNetwork().getScheduler(),3,dst,next_seq_num);
             tmpTimer.start();
@@ -114,8 +113,8 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
     public void sendAck(Datagram datagram) throws Exception {
         Packet packet = new Packet(((Packet) datagram.getPayload()).seqNumber);
 
+        Logger.logAckSent(packet);
         if (random.nextDouble() > packetLossProbability){
-            Logger.logAckSent(packet);
             host.getIPLayer().send(IPAddress.ANY, datagram.src, IP_PROTO_SELECTIVE_REPEAT, packet);
         } else {
             Logger.logAckLoss(packet);

@@ -3,7 +3,6 @@ package reso.examples.selectiveRepeat;
 import reso.common.AbstractApplication;
 import reso.ip.IPAddress;
 import reso.ip.IPHost;
-import reso.ip.IPLayer;
 
 public class AppReceiver
         extends AbstractApplication {
@@ -30,8 +29,8 @@ public class AppReceiver
     }
 
     public void receiveData(int data, IPAddress src){
-        System.out.println("SELECTIVE-REPEAT (" + (int) (host.getNetwork().getScheduler().getCurrentTime() * 1000) + "ms)" +
-                " host=" + host.name + ", dgram.src=" + src   + ", counter=" + data);
+        //System.out.println("SELECTIVE-REPEAT (" + (int) (host.getNetwork().getScheduler().getCurrentTime() * 1000) + "ms)" +
+        //        " host=" + host.name + ", dgram.src=" + src   + ", counter=" + data);
     }
 
 }

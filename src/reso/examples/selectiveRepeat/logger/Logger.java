@@ -1,20 +1,21 @@
 package reso.examples.selectiveRepeat.logger;
 
-import reso.common.Host;
 import reso.examples.selectiveRepeat.AppReceiver;
 import reso.examples.selectiveRepeat.AppSender;
+import reso.examples.selectiveRepeat.Demo;
 import reso.examples.selectiveRepeat.Packet;
-import reso.ip.IPAddress;
-import reso.ip.IPLayer;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 public class Logger {
     private static class LogFormatter {
+        private final static int NUMBER_OF_DIGITS = 5;
+
         public static String logFormat(String message) {
-            return "[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm:ss")) + "] <> " + message;
+            int time = (int) Math.floor(Demo.scheduler.getCurrentTime() * 1000);
+            StringBuilder bobTheBuilder = new StringBuilder();
+            int j = Math.max(1, (int) Math.ceil(Math.log10(time)));
+            bobTheBuilder.append("0".repeat(Math.max(0, NUMBER_OF_DIGITS - j)));
+            bobTheBuilder.append(time);
+            return "[" + bobTheBuilder + "] <> " + message;
         }
     }
 
