@@ -11,6 +11,8 @@ import reso.scheduler.AbstractScheduler;
 import reso.scheduler.Scheduler;
 import reso.utilities.NetworkBuilder;
 
+import java.util.Scanner;
+
 public class Demo {
 
     /* Enable or disable packet capture (can be used to observe ARP messages) */
@@ -18,24 +20,25 @@ public class Demo {
 
     public static void main(String[] args) {
         // Params of the application :
-        System.out.println("  /$$$$$$            /$$                       /$$     /$$                             /$$$$$$$                                            /$$    \n" +
-                " /$$__  $$          | $$                      | $$    |__/                            | $$__  $$                                          | $$    \n" +
-                "| $$  \\__/  /$$$$$$ | $$  /$$$$$$   /$$$$$$$ /$$$$$$   /$$ /$$    /$$ /$$$$$$         | $$  \\ $$  /$$$$$$   /$$$$$$   /$$$$$$   /$$$$$$  /$$$$$$  \n" +
-                "|  $$$$$$  /$$__  $$| $$ /$$__  $$ /$$_____/|_  $$_/  | $$|  $$  /$$//$$__  $$ /$$$$$$| $$$$$$$/ /$$__  $$ /$$__  $$ /$$__  $$ |____  $$|_  $$_/  \n" +
-                " \\____  $$| $$$$$$$$| $$| $$$$$$$$| $$        | $$    | $$ \\  $$/$$/| $$$$$$$$|______/| $$__  $$| $$$$$$$$| $$  \\ $$| $$$$$$$$  /$$$$$$$  | $$    \n" +
-                " /$$  \\ $$| $$_____/| $$| $$_____/| $$        | $$ /$$| $$  \\  $$$/ | $$_____/        | $$  \\ $$| $$_____/| $$  | $$| $$_____/ /$$__  $$  | $$ /$$\n" +
-                "|  $$$$$$/|  $$$$$$$| $$|  $$$$$$$|  $$$$$$$  |  $$$$/| $$   \\  $/  |  $$$$$$$        | $$  | $$|  $$$$$$$| $$$$$$$/|  $$$$$$$|  $$$$$$$  |  $$$$/\n" +
-                " \\______/  \\_______/|__/ \\_______/ \\_______/   \\___/  |__/    \\_/    \\_______/        |__/  |__/ \\_______/| $$____/  \\_______/ \\_______/   \\___/  \n" +
-                "                                                                                                          | $$                                    \n" +
-                "                                                                                                          | $$                                    \n" +
-                "                                                                                                          |__/                                    ");
-        /*
-        System.out.println("How much packets would you like to send ?");
+        System.out.println("""
+                  /$$$$$$            /$$                       /$$     /$$                             /$$$$$$$                                            /$$   \s
+                 /$$__  $$          | $$                      | $$    |__/                            | $$__  $$                                          | $$   \s
+                | $$  \\__/  /$$$$$$ | $$  /$$$$$$   /$$$$$$$ /$$$$$$   /$$ /$$    /$$ /$$$$$$         | $$  \\ $$  /$$$$$$   /$$$$$$   /$$$$$$   /$$$$$$  /$$$$$$ \s
+                |  $$$$$$  /$$__  $$| $$ /$$__  $$ /$$_____/|_  $$_/  | $$|  $$  /$$//$$__  $$ /$$$$$$| $$$$$$$/ /$$__  $$ /$$__  $$ /$$__  $$ |____  $$|_  $$_/ \s
+                 \\____  $$| $$$$$$$$| $$| $$$$$$$$| $$        | $$    | $$ \\  $$/$$/| $$$$$$$$|______/| $$__  $$| $$$$$$$$| $$  \\ $$| $$$$$$$$  /$$$$$$$  | $$   \s
+                 /$$  \\ $$| $$_____/| $$| $$_____/| $$        | $$ /$$| $$  \\  $$$/ | $$_____/        | $$  \\ $$| $$_____/| $$  | $$| $$_____/ /$$__  $$  | $$ /$$
+                |  $$$$$$/|  $$$$$$$| $$|  $$$$$$$|  $$$$$$$  |  $$$$/| $$   \\  $/  |  $$$$$$$        | $$  | $$|  $$$$$$$| $$$$$$$/|  $$$$$$$|  $$$$$$$  |  $$$$/
+                 \\______/  \\_______/|__/ \\_______/ \\_______/   \\___/  |__/    \\_/    \\_______/        |__/  |__/ \\_______/| $$____/  \\_______/ \\_______/   \\___/ \s
+                                                                                                                          | $$                                   \s
+                                                                                                                          | $$                                   \s
+                                                                                                                          |__/                                   \s""");
+
+        System.out.println("How many packets would you like to send ?");
         Scanner scanner = new Scanner(System.in);
         int packetNbr = scanner.nextInt();
-        System.out.println("Percentage of change to loose a packet ?");
-        int missingRate = scanner.nextInt();
-         */
+        System.out.println("Percentage of chance to loose a packet ? (0-1)");
+        double missingRate = scanner.nextDouble();
+
 
         AbstractScheduler scheduler = new Scheduler();
         Network network = new Network(scheduler);
@@ -49,11 +52,11 @@ public class Demo {
             host1.getIPLayer().addRoute(IP_ADDR2, "eth0");
             if (ENABLE_SNIFFER)
                 host1.addApplication(new AppSniffer(host1, new String[]{"eth0"}));
-            host1.addApplication(new AppSender(host1, IP_ADDR2));
+            host1.addApplication(new AppSender(host1, IP_ADDR2,packetNbr,missingRate));
 
             IPHost host2 = NetworkBuilder.createHost(network, "H2", IP_ADDR2, MAC_ADDR2);
             host2.getIPLayer().addRoute(IP_ADDR1, "eth0");
-            host2.addApplication(new AppReceiver(host2));
+            host2.addApplication(new AppReceiver(host2,packetNbr,missingRate));
 
             EthernetInterface h1_eth0 = (EthernetInterface) host1.getInterfaceByName("eth0");
             EthernetInterface h2_eth0 = (EthernetInterface) host2.getInterfaceByName("eth0");

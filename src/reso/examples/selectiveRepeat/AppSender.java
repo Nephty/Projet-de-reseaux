@@ -12,20 +12,25 @@ public class AppSender
 
     private final IPAddress dst;
 
-    public AppSender(IPHost host, IPAddress dst) {
+    private final double packetLossProbability;
+    private final int packetNbr;
+
+    public AppSender(IPHost host, IPAddress dst,int packetNbr,double packetLossProbability) {
         super(host, "sender");
         this.dst = dst;
+        this.packetLossProbability = packetLossProbability;
+        this.packetNbr = packetNbr;
     }
 
     public void start()
             throws Exception {
         Random rand = new Random();
-        Packet[] packets = new Packet[15];
-        for (int i=0;i<15;i++){
-            packets[i] = new Packet(i,i);
+        Packet[] packets = new Packet[packetNbr];
+        for (int i=0;i<packetNbr;i++){
+            packets[i] = new Packet(i+1,i);
         }
-        SelectiveRepeatProtocol transportLayer = new SelectiveRepeatProtocol((IPHost) host);
-        for(int i=0;i<15;i++){
+        SelectiveRepeatProtocol transportLayer = new SelectiveRepeatProtocol((IPHost) host,packetNbr,packetLossProbability);
+        for(int i=0;i<packetNbr;i++){
             transportLayer.sendData(packets[i].data,dst);
         }
     }
