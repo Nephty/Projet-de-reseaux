@@ -1,27 +1,33 @@
 package reso.examples.selectiveRepeat;
 
 import reso.common.AbstractApplication;
+import reso.examples.selectiveRepeat.logger.Logger;
 import reso.ip.IPAddress;
 import reso.ip.IPHost;
 
 public class AppReceiver
         extends AbstractApplication {
 
+    private final IPAddress ipAddress;
+
     private final double packetLossProbability;
 
     private final int packetNbr;
 
-    public AppReceiver(IPHost host,int packetNbr,double packetLossProbability) {
+    public AppReceiver(IPHost host,IPAddress ipAddress,int packetNbr,double packetLossProbability) {
         super(host, "receiver");
         this.packetNbr = packetNbr;
         this.packetLossProbability = packetLossProbability;
+        this.ipAddress = ipAddress;
     }
 
     public void start() {
+        Logger.logAppReceiverLaunched(this);
         new SelectiveRepeatProtocol((IPHost) host,packetNbr,this,packetLossProbability);
     }
 
     public void stop() {
+        Logger.logAppReceiverStopped(this);
     }
 
     public String getHostName() {
@@ -33,4 +39,7 @@ public class AppReceiver
         //        " host=" + host.name + ", dgram.src=" + src   + ", counter=" + data);
     }
 
+    public String getIPAddressAsString() {
+        return ipAddress.toString();
+    }
 }

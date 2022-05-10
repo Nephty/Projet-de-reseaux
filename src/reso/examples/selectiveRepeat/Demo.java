@@ -53,7 +53,7 @@ public class Demo {
 
             IPHost host2 = NetworkBuilder.createHost(network, "H2", IP_ADDR2, MAC_ADDR2);
             host2.getIPLayer().addRoute(IP_ADDR1, "eth0");
-            host2.addApplication(new AppReceiver(host2,packetNbr,missingRate));
+            host2.addApplication(new AppReceiver(host2,IP_ADDR1,packetNbr,missingRate));
 
             EthernetInterface h1_eth0 = (EthernetInterface) host1.getInterfaceByName("eth0");
             EthernetInterface h2_eth0 = (EthernetInterface) host2.getInterfaceByName("eth0");

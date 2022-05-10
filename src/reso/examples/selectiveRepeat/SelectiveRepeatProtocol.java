@@ -5,6 +5,7 @@ import reso.examples.selectiveRepeat.logger.Logger;
 import reso.ip.*;
 import reso.scheduler.AbstractScheduler;
 
+import java.util.HashMap;
 import java.util.Random;
 
 public class SelectiveRepeatProtocol implements IPInterfaceListener {
@@ -31,6 +32,14 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
 
     private final double packetLossProbability;
 
+    private int ssthresh = Integer.MAX_VALUE;
+
+    private int cwnd = 1;
+
+    private int increaseCwndBy = 0;  // how many MSS to add to cwnd
+
+    private HashMap<Integer, Integer> duplicateACKsHashMap = new HashMap<>();
+
 
 
     public SelectiveRepeatProtocol(IPHost host,int packetNbr,double packetLossProbability) {
@@ -55,6 +64,29 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
         if (packet.isAck){
             // Sender side
             Logger.logAckReceived(packet);
+            int seqNumber = packet.getSeqNumber();
+            if (duplicateACKsHashMap.get(seqNumber) == null) {
+                // not in hashmap (= 0)
+                duplicateACKsHashMap.put(seqNumber, 1);
+            } else {
+                int numberOfACKsForSeqNumber = duplicateACKsHashMap.get(seqNumber);
+                duplicateACKsHashMap.put(seqNumber, ++numberOfACKsForSeqNumber);
+            }
+            if (duplicateACKsHashMap.get(seqNumber) > 3) {
+                // Loss marked by three duplicate ACKs
+                // Multiplicative decrease
+                cwnd /= 2;
+                ssthresh = cwnd;
+                Logger.logLoss(packet, cwnd, ssthresh);
+            } else {
+                int oldCwnd = cwnd;
+                if (cwnd < ssthresh) increaseCwndBy++;  // Slow start : allows exponential growth (add 1, then 2, then 3, then 4...)
+                else increaseCwndBy = 1; // Fast recovery : linear growth
+                cwnd += increaseCwndBy;
+                Logger.logCongestionWindowSizeChanged(oldCwnd, cwnd);
+
+                // TODO : should the code below be put in this else ? or should we execute it even in case of a loss ?
+            }
             if (!buffer[packet.seqNumber].isAck) {
                 buffer[packet.seqNumber].isAck = true;
                 if (sendBase == packet.seqNumber && sendBase != bufferSize-1) {
@@ -68,6 +100,7 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
                     }
                 }
             }
+            // TODO : when timeout, ssthresh = cwnd / 2; cwnd = 1;
         } else {
             // Receiver side
             Logger.logPacketReceived(packet);
@@ -95,14 +128,13 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
     }
 
     private void sendData(Packet data, IPAddress dst) throws Exception {
-        if (next_seq_num < sendBase + WINDOW_SIZE) {
-            Logger.logPacketSent(data); // TODO : is data the packet sent ?
+        //if (next_seq_num < sendBase + WINDOW_SIZE) {
+        if (next_seq_num < cwnd) {
+            Logger.logPacketSent(data);
             if (random.nextDouble() > packetLossProbability) {
-                //System.out.println("-- SENDING pkt n°" + next_seq_num);
                 host.getIPLayer().send(IPAddress.ANY, dst, IP_PROTO_SELECTIVE_REPEAT, data);
             } else {
-                Logger.logPacketLoss(data); // TODO : is data the packet sent ?
-                //System.out.println("===== PACKET LOSS "+next_seq_num+" ========");
+                Logger.logPacketLoss(data);
             }
             Timer tmpTimer = new Timer(host.getNetwork().getScheduler(),3,dst,next_seq_num);
             tmpTimer.start();

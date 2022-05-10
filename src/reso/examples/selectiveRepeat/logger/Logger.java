@@ -7,7 +7,7 @@ import reso.examples.selectiveRepeat.Packet;
 
 public class Logger {
     private static class LogFormatter {
-        private final static int NUMBER_OF_DIGITS = 5;
+        private final static int NUMBER_OF_DIGITS = 6;
 
         public static String logFormat(String message) {
             int time = (int) Math.floor(Demo.scheduler.getCurrentTime() * 1000);
@@ -38,11 +38,11 @@ public class Logger {
     }
 
     public static void logAppReceiverLaunched(AppReceiver appReceiver) {
-        log(String.format("App receiver launched with host %s.", appReceiver.getHostName()));
+        log(String.format("App receiver launched with host %s and IP %s.", appReceiver.getHostName(), appReceiver.getIPAddressAsString()));
     }
 
     public static void logAppReceiverStopped(AppReceiver appReceiver) {
-        log(String.format("App receiver with host %s stopped.", appReceiver.getHostName()));
+        log(String.format("App receiver with host %s and with IP %s stopped.", appReceiver.getHostName(), appReceiver.getIPAddressAsString()));
     }
 
     public static void logAppSenderLaunched(AppSender appSender) {
@@ -75,5 +75,21 @@ public class Logger {
 
     public static void logAckLoss(Packet packet) {
         log(String.format("ACK LOSS : ACK for packet with sequence number %d was lost.", packet.getSeqNumber()));
+    }
+
+    public static void logLoss(Packet packet, int newCwnd, int newSst) {
+        log(String.format("Three duplicated ACKs received for packet with sequence number %d.\n" +
+                "    -> New congestion window size : %d.\n" +
+                "    -> New slow start threshold   : %d.", packet.getSeqNumber(), newCwnd, newSst));
+    }
+
+    public static void logCongestionWindowSizeChanged(int oldCwnd, int newCwnd) {
+        if (newCwnd - oldCwnd == 1 && oldCwnd != 1) {
+            // Fast recovery : linear increase
+            log(String.format("Congestion window size changed from %d MSS to %d MSS (current mode : fast recovery).", oldCwnd, newCwnd));
+        } else {
+            // Slow start : exponential growth
+            log(String.format("Congestion window size changed from %d MSS to %d MSS (current mode : slow start).", oldCwnd, newCwnd));
+        }
     }
 }
