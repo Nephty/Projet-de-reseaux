@@ -24,7 +24,6 @@ public class AppSender
 
     public void start()
             throws Exception {
-        Logger.logAppSenderLaunched(this);
         Random rand = new Random();
         Packet[] packets = new Packet[packetNbr];
         for (int i=0;i<packetNbr;i++){
@@ -37,7 +36,6 @@ public class AppSender
     }
 
     public void stop() {
-        Logger.logAppSenderStopped(this);
     }
 
     public String getHostName() {

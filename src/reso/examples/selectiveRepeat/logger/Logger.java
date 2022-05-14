@@ -5,6 +5,9 @@ import reso.examples.selectiveRepeat.AppSender;
 import reso.examples.selectiveRepeat.Demo;
 import reso.examples.selectiveRepeat.Packet;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+
 public class Logger {
     private static class LogFormatter {
         private final static int NUMBER_OF_DIGITS = 6;
@@ -77,19 +80,25 @@ public class Logger {
         log(String.format("ACK LOSS : ACK for packet with sequence number %d was lost.", packet.getSeqNumber()));
     }
 
-    public static void logLoss(Packet packet, int newCwnd, int newSst) {
-        log(String.format("Three duplicated ACKs received for packet with sequence number %d.\n" +
-                "    -> New congestion window size : %d.\n" +
-                "    -> New slow start threshold   : %d.", packet.getSeqNumber(), newCwnd, newSst));
+    public static void logLoss(int seqNumber, double newCwnd, double newSst) {
+        log(String.format("Timeout for packet number %d \n" +
+                "    -> New congestion window size : %f.\n" +
+                "    -> New slow start threshold   : %f.", seqNumber, newCwnd, newSst));
     }
 
-    public static void logCongestionWindowSizeChanged(int oldCwnd, int newCwnd) {
-        if (newCwnd - oldCwnd == 1 && oldCwnd != 1) {
-            // Fast recovery : linear increase
-            log(String.format("Congestion window size changed from %d MSS to %d MSS (current mode : fast recovery).", oldCwnd, newCwnd));
+    public static void logCongestionWindowSizeChanged(double oldCwnd, double newCwnd) {
+        if (newCwnd - oldCwnd != 1 && oldCwnd != 1) {
+            // Fast recovery : newCwnd = oldCwnd + 1/oldCwnd
+            log(String.format("Congestion window size changed from %f MSS to %f MSS (current mode : additive increase).", oldCwnd, newCwnd));
         } else {
-            // Slow start : exponential growth
-            log(String.format("Congestion window size changed from %d MSS to %d MSS (current mode : slow start).", oldCwnd, newCwnd));
+            // Slow start : newCwnd = oldCwnd++
+            log(String.format("Congestion window size changed from %f MSS to %f MSS (current mode : slow start).", oldCwnd, newCwnd));
         }
+    }
+
+    public static void saveWindowChanges(String windowHistory) throws Exception {
+        BufferedWriter fw = new BufferedWriter(new FileWriter("WindowSize.csv"));
+        fw.write(windowHistory);
+        fw.close();
     }
 }

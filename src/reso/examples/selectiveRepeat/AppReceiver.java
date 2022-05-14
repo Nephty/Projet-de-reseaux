@@ -22,12 +22,10 @@ public class AppReceiver
     }
 
     public void start() {
-        Logger.logAppReceiverLaunched(this);
         new SelectiveRepeatProtocol((IPHost) host,packetNbr,this,packetLossProbability);
     }
 
     public void stop() {
-        Logger.logAppReceiverStopped(this);
     }
 
     public String getHostName() {
@@ -35,8 +33,8 @@ public class AppReceiver
     }
 
     public void receiveData(int data, IPAddress src){
-        //System.out.println("SELECTIVE-REPEAT (" + (int) (host.getNetwork().getScheduler().getCurrentTime() * 1000) + "ms)" +
-        //        " host=" + host.name + ", dgram.src=" + src   + ", counter=" + data);
+        System.out.println("=====> SELECTIVE-REPEAT (" + (int) (host.getNetwork().getScheduler().getCurrentTime() * 1000) + "ms)" +
+                " host=" + host.name + ", dgram.src=" + src   + ", counter=" + data);
     }
 
     public String getIPAddressAsString() {
