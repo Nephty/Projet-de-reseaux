@@ -1,9 +1,11 @@
 package reso.examples.selectiveRepeat.logger;
 
+import reso.common.Host;
 import reso.examples.selectiveRepeat.AppReceiver;
 import reso.examples.selectiveRepeat.AppSender;
 import reso.examples.selectiveRepeat.Demo;
 import reso.examples.selectiveRepeat.Packet;
+import reso.ip.IPAddress;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -40,36 +42,20 @@ public class Logger {
         System.out.println(LogFormatter.logFormat(message));
     }
 
-    public static void logAppReceiverLaunched(AppReceiver appReceiver) {
-        log(String.format("App receiver launched with host %s and IP %s.", appReceiver.getHostName(), appReceiver.getIPAddressAsString()));
-    }
-
-    public static void logAppReceiverStopped(AppReceiver appReceiver) {
-        log(String.format("App receiver with host %s and with IP %s stopped.", appReceiver.getHostName(), appReceiver.getIPAddressAsString()));
-    }
-
-    public static void logAppSenderLaunched(AppSender appSender) {
-        log(String.format("App sender launched with host %s and with IP %s.", appSender.getHostName(), appSender.getIPAddressAsString()));
-    }
-
-    public static void logAppSenderStopped(AppSender appSender) {
-        log(String.format("App sender with host %s and with IP %s stopped.", appSender.getHostName(), appSender.getIPAddressAsString()));
-    }
-
     public static void logPacketSent(Packet packet) {
-        log(String.format("Sent packet with sequence number %d.", packet.getSeqNumber()));
+        log(String.format("SENT PACKET with sequence number %d.", packet.getSeqNumber()));
     }
 
     public static void logPacketReceived(Packet packet) {
-        log(String.format("Received packet with sequence number %d.", packet.getSeqNumber()));
+        log(String.format("RECEIVED PACKET with sequence number %d.", packet.getSeqNumber()));
     }
 
     public static void logAckSent(Packet packet) {
-        log(String.format("ACK sent for packet with sequence number %d.", packet.getSeqNumber()));
+        log(String.format("ACK SENT for packet with sequence number %d.", packet.getSeqNumber()));
     }
 
     public static void logAckReceived(Packet packet) {
-        log(String.format("Received ACK for packet with sequence number %d.", packet.getSeqNumber()));
+        log(String.format("RECEIVED ACK for packet with sequence number %d.", packet.getSeqNumber()));
     }
 
     public static void logPacketLoss(Packet packet) {
@@ -94,6 +80,11 @@ public class Logger {
             // Slow start : newCwnd = oldCwnd++
             log(String.format("Congestion window size changed from %f MSS to %f MSS (current mode : slow start).", oldCwnd, newCwnd));
         }
+    }
+
+    public static void packetReceived(int data, IPAddress src, IPAddress dst,Host host) {
+        log("=====> SELECTIVE-REPEAT (" + (int) (host.getNetwork().getScheduler().getCurrentTime() * 1000) + "ms)" +
+                " host=" + host.name + ", dgram.src=" + src   + ", dgram.dst="+dst +", counter=" + data +"\n");
     }
 
     public static void saveWindowChanges(String windowHistory) throws Exception {

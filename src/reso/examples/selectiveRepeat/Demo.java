@@ -22,9 +22,9 @@ public class Demo {
     public static AbstractScheduler scheduler;
 
     public static void main(String[] args) {
-        // Params of the application :
         Logger.initSelectiveRepeat();
 
+        // Params of the application :
         Scanner scanner = new Scanner(System.in);
         int packetNbr;
         do {

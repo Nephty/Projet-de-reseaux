@@ -28,16 +28,7 @@ public class AppReceiver
     public void stop() {
     }
 
-    public String getHostName() {
-        return host.name;
-    }
-
     public void receiveData(int data, IPAddress src){
-        System.out.println("=====> SELECTIVE-REPEAT (" + (int) (host.getNetwork().getScheduler().getCurrentTime() * 1000) + "ms)" +
-                " host=" + host.name + ", dgram.src=" + src   + ", counter=" + data);
-    }
-
-    public String getIPAddressAsString() {
-        return ipAddress.toString();
+        Logger.packetReceived(data,src,ipAddress,host);
     }
 }
