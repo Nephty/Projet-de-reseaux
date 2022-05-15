@@ -9,6 +9,7 @@ import reso.ip.IPAddress;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.util.Scanner;
 
 public class Logger {
     private static class LogFormatter {
@@ -91,5 +92,65 @@ public class Logger {
         BufferedWriter fw = new BufferedWriter(new FileWriter("WindowSize.csv"));
         fw.write(windowHistory);
         fw.close();
+    }
+
+    public static int askPacketNbr() {
+        Scanner scanner = new Scanner(System.in);
+        int packetNbr;
+        do {
+            System.out.print("How many packets would you like to send ? (1+) >> ");
+            while (!scanner.hasNextInt()) {
+                System.out.println("You need to enter an integer");
+                System.out.print("How many packets would you like to send ? (1+) >> ");
+                scanner.next();
+            }
+            packetNbr = scanner.nextInt();
+        } while (packetNbr < 1);
+        return packetNbr;
+    }
+
+    public static double askMissingRate() {
+        Scanner scanner = new Scanner(System.in);
+        double missingRate;
+        do {
+            System.out.print("Percentage of chance to loose a packet ? (0-1) >> ");
+            while (!scanner.hasNextDouble()) {
+                System.out.println("You need to enter a double");
+                System.out.print("Percentage of chance to loose a packet ? (0-1) >> ");
+                scanner.next();
+            }
+            missingRate = scanner.nextDouble();
+        } while (missingRate < 0 || missingRate >= 1);
+        return missingRate;
+    }
+
+    public static int askBitRate() {
+        Scanner scanner = new Scanner(System.in);
+        int bitRate;
+        do {
+            System.out.print("Bit rate of the link ? (1+) >> ");
+            while (!scanner.hasNextInt()) {
+                System.out.println("You need to enter an integer");
+                System.out.print("Bit rate of the link ? (1+) >> ");
+                scanner.next();
+            }
+            bitRate = scanner.nextInt();
+        } while (bitRate < 1);
+        return bitRate;
+    }
+
+    public static int askLinkLength() {
+        Scanner scanner = new Scanner(System.in);
+        int length;
+        do {
+            System.out.print("Length of the link ? (km) >> ");
+            while (!scanner.hasNextInt()) {
+                System.out.println("You need to enter an integer");
+                System.out.print("Length of the link ? (km) >> ");
+                scanner.next();
+            }
+            length = scanner.nextInt();
+        } while (length < 1);
+        return length*1000;
     }
 }

@@ -1,12 +1,14 @@
 package reso.examples.selectiveRepeat;
 
 import reso.common.AbstractApplication;
-import reso.examples.selectiveRepeat.logger.Logger;
 import reso.ip.IPAddress;
 import reso.ip.IPHost;
 
 import java.util.Random;
 
+/**
+ * Sender application that sends message to the {@link AppReceiver} using the {@link SelectiveRepeatProtocol}
+ */
 public class AppSender
         extends AbstractApplication {
 
@@ -15,35 +17,41 @@ public class AppSender
     private final double packetLossProbability;
     private final int packetNbr;
 
-    public AppSender(IPHost host, IPAddress dst,int packetNbr,double packetLossProbability) {
+    /**
+     * AppSender constructor
+     *
+     * @param host                  The host of the sender side of the protocol.
+     * @param dst                   The destination of the message
+     * @param packetNbr             The number of packet that will be sent.
+     * @param packetLossProbability The probability that a packet will be lost (0-1)
+     */
+    public AppSender(IPHost host, IPAddress dst, int packetNbr, double packetLossProbability) {
         super(host, "sender");
         this.dst = dst;
         this.packetLossProbability = packetLossProbability;
         this.packetNbr = packetNbr;
     }
 
+    /**
+     * Starts the application.
+     * <p>
+     * When the application is started,
+     * it tries to send N packet with randomly generated data to the destination.(N=packetNbr)
+     */
     public void start()
             throws Exception {
         Random rand = new Random();
         Packet[] packets = new Packet[packetNbr];
-        for (int i=0;i<packetNbr;i++){
-            packets[i] = new Packet(i+1,i);
+        for (int i = 0; i < packetNbr; i++) {
+            packets[i] = new Packet(rand.nextInt(), i);
         }
-        SelectiveRepeatProtocol transportLayer = new SelectiveRepeatProtocol((IPHost) host,packetNbr,packetLossProbability);
-        for(int i=0;i<packetNbr;i++){ // TODO : this is probably what should be modified to increase the amount of packets sent at once (in function of cwnd)
-            transportLayer.sendData(packets[i].data,dst);
+        SelectiveRepeatProtocol transportLayer = new SelectiveRepeatProtocol((IPHost) host, packetNbr, packetLossProbability);
+        for (int i = 0; i < packetNbr; i++) {
+            transportLayer.sendData(packets[i].data, dst);
         }
     }
 
     public void stop() {
-    }
-
-    public String getHostName() {
-        return host.name;
-    }
-
-    public String getIPAddressAsString() {
-        return dst.toString();
     }
 
 }

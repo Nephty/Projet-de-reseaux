@@ -13,6 +13,7 @@ import reso.scheduler.AbstractScheduler;
 import reso.scheduler.Scheduler;
 import reso.utilities.NetworkBuilder;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Demo {
@@ -25,18 +26,10 @@ public class Demo {
         Logger.initSelectiveRepeat();
 
         // Params of the application :
-        Scanner scanner = new Scanner(System.in);
-        int packetNbr;
-        do {
-            System.out.print("How many packets would you like to send ? (1+) >> ");
-            packetNbr = scanner.nextInt();
-        } while (packetNbr < 1);
-        double missingRate;
-        do {
-            System.out.print("Percentage of chance to loose a packet ? (0-1) >> ");
-            missingRate = scanner.nextDouble();
-        } while (missingRate > 1);
-
+        int packetNbr = Logger.askPacketNbr();
+        double missingRate = Logger.askMissingRate();
+        int bitRate = Logger.askBitRate();
+        int length = Logger.askLinkLength();
 
         scheduler = new Scheduler();
         Network network = new Network(scheduler);
@@ -50,19 +43,19 @@ public class Demo {
             host1.getIPLayer().addRoute(IP_ADDR2, "eth0");
             if (ENABLE_SNIFFER)
                 host1.addApplication(new AppSniffer(host1, new String[]{"eth0"}));
-            host1.addApplication(new AppSender(host1, IP_ADDR2,packetNbr,missingRate));
-           ((IPEthernetAdapter) host1.getIPLayer().getInterfaceByName("eth0")).addARPEntry(IP_ADDR2, MAC_ADDR2);
+            host1.addApplication(new AppSender(host1, IP_ADDR2, packetNbr, missingRate));
+            ((IPEthernetAdapter) host1.getIPLayer().getInterfaceByName("eth0")).addARPEntry(IP_ADDR2, MAC_ADDR2);
 
             IPHost host2 = NetworkBuilder.createHost(network, "H2", IP_ADDR2, MAC_ADDR2);
             host2.getIPLayer().addRoute(IP_ADDR1, "eth0");
-            host2.addApplication(new AppReceiver(host2,IP_ADDR1,packetNbr,missingRate));
+            host2.addApplication(new AppReceiver(host2, IP_ADDR1, packetNbr, missingRate));
             ((IPEthernetAdapter) host2.getIPLayer().getInterfaceByName("eth0")).addARPEntry(IP_ADDR1, MAC_ADDR1);
 
             EthernetInterface h1_eth0 = (EthernetInterface) host1.getInterfaceByName("eth0");
             EthernetInterface h2_eth0 = (EthernetInterface) host2.getInterfaceByName("eth0");
 
             // Connect both interfaces with a 5000km long link
-            new Link<>(h1_eth0, h2_eth0, 5000000, 100000);
+            new Link<>(h1_eth0, h2_eth0, length, bitRate);
 
             host1.start();
             host2.start();

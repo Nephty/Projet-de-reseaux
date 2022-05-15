@@ -11,6 +11,8 @@ import java.util.Random;
 /**
  * Implementation of the pipelining protocol SelectiveRepeat with a congestion control with the same
  * behavior as TCP RENO (additive increase, Multiplicative decrease, slow start).
+ *
+ * In this implementation, only integers can be sent.
  */
 public class SelectiveRepeatProtocol implements IPInterfaceListener {
 
@@ -18,9 +20,6 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
     public static final int IP_PROTO_SELECTIVE_REPEAT = Datagram.allocateProtocolNumber("SELECTIVE_REPEAT");
 
     private final IPHost host;
-
-    // =========== RECEIVER INSTANCE =============
-    private AppReceiver receiver;
 
     // ============= SELECTIVE REPEAT ============
 
@@ -50,7 +49,7 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
 
     private final HashMap<Integer, Integer> duplicateACKsHashMap = new HashMap<>();
 
-    public String windowSizeHistory = "Time,WindowSize\n";
+    public String windowSizeHistory = "Time(s),WindowSize(Packet)\n";
 
     // ================= RTT & RTO ================
 
@@ -75,23 +74,6 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
         this.packetLossProbability = packetLossProbability;
         windowSizeHistory += host.getNetwork().getScheduler().getCurrentTime() + "," + cwnd + "\n";
         host.getIPLayer().addListener(IP_PROTO_SELECTIVE_REPEAT, this);
-    }
-
-    /**
-     * RECEIVER constructor
-     *
-     * @param host                  The host of the receiver side of the protocol
-     * @param packetNbr             The number of packet the sender will send. (used to create the buffer)
-     * @param receiver              The instance of the receiver to send the packet when it's received by the protocol.
-     * @param packetLossProbability The probability to lose an ACK
-     */
-    public SelectiveRepeatProtocol(IPHost host, int packetNbr, AppReceiver receiver, double packetLossProbability) {
-        this.host = host;
-        this.buffer = new Packet[packetNbr];
-        this.bufferSize = buffer.length;
-        this.packetLossProbability = packetLossProbability;
-        host.getIPLayer().addListener(IP_PROTO_SELECTIVE_REPEAT, this);
-        this.receiver = receiver;
     }
 
     /**
@@ -172,10 +154,10 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
                 // We have not yet received this ack.
                 buffer[packet.seqNumber] = packet;
                 if (packet.seqNumber == recvBase) {
-                    receiver.receiveData(buffer[recvBase].data, datagram.src);
+                    Logger.packetReceived(buffer[recvBase].data, datagram.src,datagram.dst,host);
                     recvBase++;
                     while (recvBase < bufferSize && buffer[recvBase] != null) {
-                        receiver.receiveData(buffer[recvBase].data, datagram.src);
+                        Logger.packetReceived(buffer[recvBase].data, datagram.src,datagram.dst,host);
                         recvBase++;
                     }
                 }
@@ -225,8 +207,9 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
 
     /**
      * Send ACKNOWLEDGMENT method of the protocol.
-     *
+     * <p>
      * It tries to send the packet with a chance to lose the ACK.
+     *
      * @param datagram IP datagram of the message, used to get the sequence number and the src of the message.
      * @see Logger#logAckLoss(Packet)
      */
@@ -243,9 +226,10 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
 
     /**
      * The timer of the packet has ended, the packet has been lost.
-     *
+     * <p>
      * Changes the RTO, the window size and resend the message.
-     * @param dst The destination of the message.
+     *
+     * @param dst       The destination of the message.
      * @param seqNumber The sequence number of the packet
      * @see Logger#logLoss(int, double, double)
      */
@@ -299,8 +283,9 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
 
     /**
      * Set the value of the RTO.
-     *
+     * <p>
      * It uses this formula : RTO = 2 * RTO
+     *
      * @param timer Timer of the packet from which we want to set the RTO.
      */
     public void setRTO(Timer timer) {
@@ -323,8 +308,8 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
          * Timer constructor.
          *
          * @param scheduler The scheduler of the network. (To have access to the time)
-         * @param interval seconds between two timer events.
-         * @param dst The destination of the packet linked to this timer
+         * @param interval  seconds between two timer events.
+         * @param dst       The destination of the packet linked to this timer
          * @param seqNumber The sequence number of the packet linked to the timer
          */
         public Timer(AbstractScheduler scheduler, double interval, IPAddress dst, int seqNumber) {
@@ -335,8 +320,8 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
 
         /**
          * This method is called after the interval of time.
-         *
-         * If the seqNumber hasn't been yet acked, we stop the timer and call the {@link #timeout(IPAddress, int)} method.
+         * <p>
+         * If the seqNumber hasn't been yet ACKed, we stop the timer and call the {@link #timeout(IPAddress, int)} method.
          */
         protected void run() throws Exception {
             if (!buffer[seqNumber].isAck) {
@@ -365,6 +350,7 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
 
         /**
          * get the value of the RTT of the packet.
+         *
          * @return The RTT (stopTime - startingTime)
          */
         public double getRTT() {
