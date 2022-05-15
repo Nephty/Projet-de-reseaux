@@ -85,7 +85,7 @@ public class Logger {
 
     public static void packetReceived(int data, IPAddress src, IPAddress dst,Host host) {
         log("=====> SELECTIVE-REPEAT (" + (int) (host.getNetwork().getScheduler().getCurrentTime() * 1000) + "ms)" +
-                " host=" + host.name + ", dgram.src=" + src   + ", dgram.dst="+dst +", counter=" + data +"\n");
+                " host=" + host.name + ", dgram.src=" + src   + ", dgram.dst="+dst +", value=" + data +"\n");
     }
 
     public static void saveWindowChanges(String windowHistory) throws Exception {

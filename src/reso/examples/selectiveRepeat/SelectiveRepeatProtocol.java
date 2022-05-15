@@ -156,7 +156,7 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
                 if (packet.seqNumber == recvBase) {
                     Logger.packetReceived(buffer[recvBase].data, datagram.src,datagram.dst,host);
                     recvBase++;
-                    while (recvBase < bufferSize && buffer[recvBase] != null) {
+                    while (recvBase < buffer.length && buffer[recvBase] != null) {
                         Logger.packetReceived(buffer[recvBase].data, datagram.src,datagram.dst,host);
                         recvBase++;
                     }

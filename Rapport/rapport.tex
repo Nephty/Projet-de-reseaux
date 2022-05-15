@@ -100,4 +100,55 @@ Pour éxécuter un des script, il suffit d'exécuter l'une de ces commandes :
     \end{verbatim} 
 \end{center}
 
+\newpage
+
+\section{Approche utilisée dans l'implémentation}
+
+\subsection{Selective repeat}
+Après avoir implémenté la partie applicative en se basant sur l'exemple "ping-pong", 
+nous avons commencé la partie Selective Repeat.
+\vspace{0.5cm}
+
+Tout d'abord, un choix a dû être effectué en ce qui concerne la fenêtre d'envoi. 
+En effet, deux choix s'offraient à nous, soit utiliser une fenêtre exprimée en octet,
+soit une fenêtre exprimée en packet.
+C'est sur cette dernière possibilité que nous nous sommes basé. Il est beaucoup plus facile de gérer une fenêtre exprimée
+en packet en java car il suffirait de délimiter la taille de la fenêtre entre deux indice d'un tableau de packet à envoyer.
+Avec une fenêtre exprimée en octet, il faudrait vérifier la taille de chaque paquet ce qui rend la tâche plus compliquée.
+Cette méthode a posé quelques problèmes lors de l'implémentation du contrôle de congestion décrite plus loin dans ce rapport.
+\vspace{0.5cm}
+
+Lorsque la taille de la fenêtre d'envoi diminue, il est possible que certains paquets ayant déjà été envoyés se retrouvent hors de la fenêtre d'envoi.
+Afin de ne pas perdre ces paquets, les paquets déjà envoyés seront tout de même pris en compte même si ils ne sont plus dans la fenêtre d'envoi.
+
+
+\subsection{Congestion control}
+Comme précisé plus haut, le choix de modéliser la fenêtre d'envoi en paquet et non en octet a apporté quelques problèmes.
+En effet, la formule permettant de calculer l'augmentation de la taille de la fenêtre lors du \textit{Additive Increase}
+ne peut pas être utilisée directement.
+\[
+    cwnd' = cwnd + \frac{MSS^2}{cwnd}
+\]
+Dans la formule, le MSS est en octet mais notre fenêtre est exprimée en paquet nous avons donc dû adapter la formule à notre logiciel.
+Sachant que le MSS vaut la taille maximale d'un paquet, nous avons donc remplacé cette valeur par 1.
+Cependant, cela donnera une taille de fenêtre en nombre à virgule et non un entier. Nous avons donc converti la taille de la fenêtre
+en double et calculons tout ce dont nous avons besoin sans arrondir cette valeur.
+Cette valeur n'est uniquement arrondie que lorsque nous souhaitons envoyer un paquet et nous devons vérifier que ce paquet est dans la fenêtre d'envoi.
+\[
+    cwnd' = cwnd + \frac{1^2}{cwnd}
+\]  
+
+\newpage
+
+\section{Difficultés rencontrées}
+La difficulté majeure rencontrée a été que l'envoi de pacet successif ne s'effectuait pas, uniquement le dernier paquet était envoyé.
+Nous avons donc essayé de contourner ce problème en créant une première méthode sendData permettant au sender d'envoyer ses données au protocol
+qui les stockerait dans un buffer (créant au préalable un objet Packet) en essayant ensuite de les envoyer avec l'autre méthode sendData.
+
+Nous avons Cependant trouvé la solution par la suite. Il suffisait simplement que les hôtes (host1 et host2) connaissent
+les adresses MAC de l'autre ce qui evitait d'envoyer une requête ARP qui mettait le paquet en attente (Dans le simulateur, une seule requête ARP peut-être mise en attente. Si une nouvelle requête arrive, elle écrase la précédante)
+
+\section{\'Etat de l'implémentation}
+L'application est actuellement fonctionnelle dans la majeure partie des cas et respecte toutes les demandes de l'énoncé.
+
 \end{document}
