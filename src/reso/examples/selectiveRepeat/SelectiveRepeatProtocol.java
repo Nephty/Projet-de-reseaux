@@ -98,6 +98,8 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
     public void receive(IPInterfaceAdapter src, Datagram datagram) throws Exception {
         Packet packet = (Packet) datagram.getPayload();
         if (packet.isAck) {
+            if (timers[0] == null)
+                return;
             // Sender side
             Logger.logAckReceived(packet);
             int seqNumber = packet.getSeqNumber();

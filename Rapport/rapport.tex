@@ -149,6 +149,9 @@ Nous avons Cependant trouvé la solution par la suite. Il suffisait simplement q
 les adresses MAC de l'autre ce qui evitait d'envoyer une requête ARP qui mettait le paquet en attente (Dans le simulateur, une seule requête ARP peut-être mise en attente. Si une nouvelle requête arrive, elle écrase la précédante)
 
 \section{\'Etat de l'implémentation}
-L'application est actuellement fonctionnelle dans la majeure partie des cas et respecte toutes les demandes de l'énoncé.
+L'application est actuellement fonctionnelle dans la majeure partie des cas.
+Cependant, lors de la réduction de la taille de la fenêtre, les packet qui étaient déjà envoyé et, à cause de cette réduction,
+ne sont plus dans la fenêtre d'envoi continue à être utilisé. C'est finalement une bonne chose que les paquets ne soient pas perdus cependant, 
+si un de ces paquets n'a pas été envoyé (donc appel à \emph{timeout()}) le paquet est directement renvoyé alors qu'il ne fait pas partie de la fenêtre.
 
 \end{document}

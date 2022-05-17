@@ -23,7 +23,7 @@ public class Demo {
     public static AbstractScheduler scheduler;
 
     public static void main(String[] args) {
-        Logger.initSelectiveRepeat();
+        //Logger.initSelectiveRepeat();
 
         // Params of the application :
         int packetNbr = Logger.askPacketNbr();
