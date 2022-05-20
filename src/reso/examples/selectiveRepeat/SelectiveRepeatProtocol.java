@@ -11,7 +11,7 @@ import java.util.Random;
 /**
  * Implementation of the pipelining protocol SelectiveRepeat with a congestion control with the same
  * behavior as TCP RENO (additive increase, Multiplicative decrease, slow start).
- *
+ * <p>
  * In this implementation, only integers can be sent.
  */
 public class SelectiveRepeatProtocol implements IPInterfaceListener {
@@ -31,7 +31,7 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
 
     private final Packet[] buffer;
 
-    private Timer[] timers;
+    private final Timer[] timers;
 
     private int bufferSize = 0;
 
@@ -99,6 +99,8 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
         Packet packet = (Packet) datagram.getPayload();
         if (packet.isAck) {
             if (timers[0] == null)
+                // When there's a timeout just before the sender receives the ack of that packet,
+                // Then the packet is resent but with ACK = true. I don't know why :(
                 return;
             // Sender side
             Logger.logAckReceived(packet);
@@ -132,7 +134,7 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
 
             offset = cwnd - oldCwnd;
             if (!buffer[packet.seqNumber].isAck) {
-                buffer[packet.seqNumber].isAck = true;
+                buffer[packet.seqNumber].setAck(true);
                 if (sendBase == packet.seqNumber && sendBase != bufferSize - 1) {
                     // if the ACK is the sendBase, we increase it until we are on a packet that has not yet been acked.
                     while (sendBase < bufferSize && buffer[sendBase].isAck) {
@@ -156,10 +158,10 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
                 // We have not yet received this ack.
                 buffer[packet.seqNumber] = packet;
                 if (packet.seqNumber == recvBase) {
-                    Logger.packetReceived(buffer[recvBase].data, datagram.src,datagram.dst,host);
+                    Logger.packetReceived(buffer[recvBase].data, datagram.src, datagram.dst, host);
                     recvBase++;
                     while (recvBase < buffer.length && buffer[recvBase] != null) {
-                        Logger.packetReceived(buffer[recvBase].data, datagram.src,datagram.dst,host);
+                        Logger.packetReceived(buffer[recvBase].data, datagram.src, datagram.dst, host);
                         recvBase++;
                     }
                 }
@@ -236,8 +238,6 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
      * @see Logger#logLoss(int, double, double)
      */
     public void timeout(IPAddress dst, int seqNumber) throws Exception {
-        setRTO(timers[seqNumber]);
-        //System.out.println(RTO);
         timers[seqNumber] = new Timer(host.getNetwork().getScheduler(), RTO, dst, seqNumber);
         timers[seqNumber].start();
         host.getIPLayer().send(IPAddress.ANY, dst, IP_PROTO_SELECTIVE_REPEAT, buffer[seqNumber]);
@@ -245,6 +245,7 @@ public class SelectiveRepeatProtocol implements IPInterfaceListener {
         double oldCwnd = cwnd;
         cwnd = 1;
         ssthresh = oldCwnd / 2;
+        RTO *= 2;
         Logger.logLoss(seqNumber, cwnd, ssthresh);
         windowSizeHistory += host.getNetwork().getScheduler().getCurrentTime() + "," + cwnd + "\n";
     }

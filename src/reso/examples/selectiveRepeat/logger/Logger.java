@@ -12,23 +12,23 @@ import java.util.Scanner;
 /**
  * Utility class that logs data to the console, ask for user input and log data in files.
  * Primary roles :
- *  - log data changes such as window size
- *  - log packet and ack sending, receiving and loss
- *  - ask for user input (link length, bitrate...)
- *  - log data in a .csv file
+ * - log data changes such as window size
+ * - log packet and ack sending, receiving and loss
+ * - ask for user input (link length, bitrate...)
+ * - log data in a .csv file
  */
 public class Logger {
     /**
      * Inner class that formats a string as a log message for printing to the console.
      * Format :
-     *  [xxxxxx] <> ............
+     * [xxxxxx] <> ............
      * where xxxxxx is a time representation and ............ is the message body.
      */
     private static class LogFormatter {
         /**
          * Number of digits to use to represent time.
          * Example with 3 digits and 5 different time stamps :
-         *  021   837   271   008   201   042
+         * 021   837   271   008   201   042
          * The same time stamps, with 5 digits :
          * 00021 00837 00271 00008 00201 00042
          */
@@ -36,8 +36,9 @@ public class Logger {
 
         /**
          * Method that will format the message according to the following format :
-         *  [xxxxxx] <> ............
+         * [xxxxxx] <> ............
          * where xxxxxx is a time representation and ............ is the message body.
+         *
          * @param message The message body.
          * @return The formatted message.
          */
@@ -52,25 +53,9 @@ public class Logger {
     }
 
     /**
-     * Because we thought it looked cool.
-     */
-    public static void initSelectiveRepeat() {
-        System.out.println("  /$$$$$$            /$$                       /$$     /$$                             /$$$$$$$                                            /$$    \n" +
-                " /$$__  $$          | $$                      | $$    |__/                            | $$__  $$                                          | $$    \n" +
-                "| $$  \\__/  /$$$$$$ | $$  /$$$$$$   /$$$$$$$ /$$$$$$   /$$ /$$    /$$ /$$$$$$         | $$  \\ $$  /$$$$$$   /$$$$$$   /$$$$$$   /$$$$$$  /$$$$$$  \n" +
-                "|  $$$$$$  /$$__  $$| $$ /$$__  $$ /$$_____/|_  $$_/  | $$|  $$  /$$//$$__  $$ /$$$$$$| $$$$$$$/ /$$__  $$ /$$__  $$ /$$__  $$ |____  $$|_  $$_/  \n" +
-                " \\____  $$| $$$$$$$$| $$| $$$$$$$$| $$        | $$    | $$ \\  $$/$$/| $$$$$$$$|______/| $$__  $$| $$$$$$$$| $$  \\ $$| $$$$$$$$  /$$$$$$$  | $$    \n" +
-                " /$$  \\ $$| $$_____/| $$| $$_____/| $$        | $$ /$$| $$  \\  $$$/ | $$_____/        | $$  \\ $$| $$_____/| $$  | $$| $$_____/ /$$__  $$  | $$ /$$\n" +
-                "|  $$$$$$/|  $$$$$$$| $$|  $$$$$$$|  $$$$$$$  |  $$$$/| $$   \\  $/  |  $$$$$$$        | $$  | $$|  $$$$$$$| $$$$$$$/|  $$$$$$$|  $$$$$$$  |  $$$$/\n" +
-                " \\______/  \\_______/|__/ \\_______/ \\_______/   \\___/  |__/    \\_/    \\_______/        |__/  |__/ \\_______/| $$____/  \\_______/ \\_______/   \\___/  \n" +
-                "                                                                                                          | $$                                    \n" +
-                "                                                                                                          | $$                                    \n" +
-                "                                                                                                          |__/                                    ");
-    }
-
-    /**
      * Main method to log a message to the console. The given message should be the message body, since this method
      * will automatically format the output.
+     *
      * @param message The message body.
      */
     private static void log(String message) {
@@ -79,6 +64,7 @@ public class Logger {
 
     /**
      * Log the sending of a packet using its sequence number.
+     *
      * @param packet The packet sent.
      */
     public static void logPacketSent(Packet packet) {
@@ -87,6 +73,7 @@ public class Logger {
 
     /**
      * Log the reception of a packet using its sequence number.
+     *
      * @param packet The received packet.
      */
     public static void logPacketReceived(Packet packet) {
@@ -95,6 +82,7 @@ public class Logger {
 
     /**
      * Log the sending of an ACK using the sequence number of the ACKed packet.
+     *
      * @param packet The ACK sent.
      */
     public static void logAckSent(Packet packet) {
@@ -103,6 +91,7 @@ public class Logger {
 
     /**
      * Log the reception of an ACK using the sequence number of the ACKed packet.
+     *
      * @param packet The received ACK.
      */
     public static void logAckReceived(Packet packet) {
@@ -111,6 +100,7 @@ public class Logger {
 
     /**
      * Log a packet loss using its sequence number.
+     *
      * @param packet The lost packet.
      */
     public static void logPacketLoss(Packet packet) {
@@ -119,6 +109,7 @@ public class Logger {
 
     /**
      * Log an ACK loss using its sequence number.
+     *
      * @param packet The lost ACK.
      */
     public static void logAckLoss(Packet packet) {
@@ -127,9 +118,10 @@ public class Logger {
 
     /**
      * Log a timeout and show the new congestion window size and the new slow start threshold.
+     *
      * @param seqNumber The sequence number of the timed out packet.
-     * @param newCwnd The new size of the congestion window.
-     * @param newSst The new slow start threshold.
+     * @param newCwnd   The new size of the congestion window.
+     * @param newSst    The new slow start threshold.
      */
     public static void logLoss(int seqNumber, double newCwnd, double newSst) {
         log(String.format("Timeout for packet number %d \n" +
@@ -140,6 +132,7 @@ public class Logger {
     /**
      * Log a change in size of the congestion window and indicates whether we are in additive increase or
      * slow start mode.
+     *
      * @param oldCwnd The previous size of the congestion window.
      * @param newCwnd The new size of the congestion window.
      */
@@ -155,19 +148,20 @@ public class Logger {
 
     /**
      * Log a packet received by the receiver part of the Selective Repeat Protocol.
-     * // TODO : cyril can you do the arguments pls :pray:
-     * @param data
-     * @param src
-     * @param dst
-     * @param host
+     *
+     * @param data The data of the packet received by the app
+     * @param src  Who sent the packet
+     * @param dst  The receiver of the packet
+     * @param host Host of the reception
      */
-    public static void packetReceived(int data, IPAddress src, IPAddress dst,Host host) {
+    public static void packetReceived(int data, IPAddress src, IPAddress dst, Host host) {
         log("=====> SELECTIVE-REPEAT (" + (int) (host.getNetwork().getScheduler().getCurrentTime() * 1000) + "ms)" +
-                " host=" + host.name + ", dgram.src=" + src   + ", dgram.dst="+dst +", value=" + data +"\n");
+                " host=" + host.name + ", dgram.src=" + src + ", dgram.dst=" + dst + ", value=" + data + "\n");
     }
 
     /**
      * Register a size change of the congestion window in a .csv file for plotting.
+     *
      * @param windowHistory The content to write to the .csv file.
      * @throws Exception When an exception occurs because of the BufferedWriter.
      */
@@ -179,6 +173,7 @@ public class Logger {
 
     /**
      * Ask for user input : how many packets should be sent ?
+     *
      * @return The number of packets that will be sent.
      */
     public static int askPacketNbr() {
@@ -198,6 +193,7 @@ public class Logger {
 
     /**
      * Ask for user input : what should be the loss rate ?
+     *
      * @return The loss rate that will be simulated.
      */
     public static double askMissingRate() {
@@ -217,6 +213,7 @@ public class Logger {
 
     /**
      * Ask for user input : what should be the bitrate of the link ?
+     *
      * @return The bitrate that will be simulated.
      */
     public static int askBitRate() {
@@ -236,6 +233,7 @@ public class Logger {
 
     /**
      * Ask for user input : what should be the length of the link ?
+     *
      * @return The length that will be simulated.
      */
     public static int askLinkLength() {
@@ -250,6 +248,6 @@ public class Logger {
             }
             length = scanner.nextInt();
         } while (length < 1);
-        return length*1000;
+        return length * 1000;
     }
 }

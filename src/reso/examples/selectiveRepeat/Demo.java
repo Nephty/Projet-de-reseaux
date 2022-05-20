@@ -13,9 +13,6 @@ import reso.scheduler.AbstractScheduler;
 import reso.scheduler.Scheduler;
 import reso.utilities.NetworkBuilder;
 
-import java.util.InputMismatchException;
-import java.util.Scanner;
-
 public class Demo {
 
     /* Enable or disable packet capture (can be used to observe ARP messages) */

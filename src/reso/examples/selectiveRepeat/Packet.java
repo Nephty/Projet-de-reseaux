@@ -5,8 +5,8 @@ import reso.common.Message;
 /**
  * Packet class used in the {@link SelectiveRepeatProtocol}.
  * <p>
- * This class can be used to send data (isAck = false && data != null)
- * but it can also be used to send ACK (isAck = true && data == null).
+ * This class can be used to send data (isAck = false AND data != null)
+ * but it can also be used to send ACK (isAck = true AND data == null).
  */
 public class Packet implements Message {
 
@@ -66,5 +66,13 @@ public class Packet implements Message {
     @Override
     public int getByteLength() {
         return 3 * (Integer.SIZE) / 8;
+    }
+
+    /**
+     * Set the value of isAck
+     * @param ack The new value of isAck
+     */
+    public void setAck(boolean ack) {
+        isAck = ack;
     }
 }

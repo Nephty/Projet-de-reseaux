@@ -69,7 +69,7 @@ Pour compiler le programme, veuillez exécuter la commande suivante dans le doss
 \end{verbatim}
 Ensuite, pour exécuter le logiciel, veuillez exécuter la commande depuis le dossier \textit{build} créé :
 \begin{verbatim}
-    java reso/examples/selectiveRepeat/Demo
+    java reso.examples.selectiveRepeat.Demo
 \end{verbatim}
 Une fois l'application lancée, il faudra entrer le nombre de paquet à envoyer, la probabilité de perte
 de paquet ou de acknowledgement, mais aussi le \textit{bit rate} du lien et la longeur du lien (en km).
@@ -147,6 +147,12 @@ qui les stockerait dans un buffer (créant au préalable un objet Packet) en ess
 
 Nous avons Cependant trouvé la solution par la suite. Il suffisait simplement que les hôtes (host1 et host2) connaissent
 les adresses MAC de l'autre ce qui evitait d'envoyer une requête ARP qui mettait le paquet en attente (Dans le simulateur, une seule requête ARP peut-être mise en attente. Si une nouvelle requête arrive, elle écrase la précédante)
+\vspace{0.5cm} \\
+\indent Un autre problème a été rencontré, lorsque l'on envoie plus d'une centaine de packet avec peu ou pas de chance de perdre un packet, 
+à partir d'un moment le timeout du packet arrive juste avant la reception du ACK de ce packet. 
+Ce qui cause le renvoi de cet paquet sauf que la valeur \emph{isAck} du paquet renvoyé est vraie.
+Le receveur se retrouve donc dans la partie sender de selectiveRepeat. 
+Aucune solution, autre que la vérifier si le receiver ne se retrouve pas dans la partie sender, n'a été trouvée à ce jour.
 
 \section{\'Etat de l'implémentation}
 L'application est actuellement fonctionnelle dans la majeure partie des cas.
