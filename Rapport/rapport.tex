@@ -151,7 +151,7 @@ les adresses MAC de l'autre ce qui evitait d'envoyer une requête ARP qui mettai
 \indent Un autre problème a été rencontré, lorsque l'on envoie plus d'une centaine de packet avec peu ou pas de chance de perdre un packet, 
 à partir d'un moment le timeout du packet arrive juste avant la reception du ACK de ce packet. 
 Ce qui cause le renvoi de cet paquet sauf que la valeur \emph{isAck} du paquet renvoyé est vraie.
-Le receveur se retrouve donc dans la partie sender de selectiveRepeat. 
+Le receveur se retrouve donc dans la partie sender de selective repeat. 
 Aucune solution, autre que la vérifier si le receiver ne se retrouve pas dans la partie sender, n'a été trouvée à ce jour.
 
 \section{\'Etat de l'implémentation}
